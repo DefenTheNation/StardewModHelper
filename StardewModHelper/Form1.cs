@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StardewModHelper.Service;
+using System;
 using System.Windows.Forms;
 
 namespace StardewModHelper
@@ -15,6 +9,19 @@ namespace StardewModHelper
         public Form1()
         {
             InitializeComponent();
+
+            ItemEnumGenerator gen = new ItemEnumGenerator(InstallPathType.GOG);
+            gen.GenerateEnumFromAll();
+
+            Application.Exit();
+
+            button1.Click += Button1_Click;
+        }
+
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
