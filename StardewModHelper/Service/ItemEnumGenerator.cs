@@ -21,14 +21,17 @@ namespace StardewModHelper.Service
         public const string GOGInstallPath = @"C:\Program Files (x86)\GOG Galaxy\Games\Stardew Valley";
 
         public string UnpackedDirectory { get; set; }
+        public Dictionary<string, string> Translations { get; set; }
 
         public ItemEnumGenerator()
         {
+            setupTranslations();
         }
 
         public ItemEnumGenerator(string fullpath)
         {
             UnpackedDirectory = fullpath;
+            setupTranslations();
         }
 
         public ItemEnumGenerator(InstallPathType type)
@@ -44,6 +47,20 @@ namespace StardewModHelper.Service
                 case InstallPathType.Custom: default:
                     break;
             }
+
+            setupTranslations();
+        }
+
+        private void setupTranslations()
+        {
+            Translations = new Dictionary<string, string>()
+            {
+                { "Stone", "MineableStone" },
+                { "Stone2", "MineableDiamondStone" },
+                { "WarpTotem", "WarpTotemFarm" },
+                { "WarpTotem2", "WarpTotemMountains" },
+                { "WarpTotem3", "WarpTotemBeach" }
+            };
         }
 
         public void GenerateEnumFromAll()
@@ -86,6 +103,10 @@ namespace StardewModHelper.Service
                 }
                 else if(isContent)
                 {
+                    // 1. Parse
+                    // 2. Find duplicates
+                    // 3. Translate to readable name, if applicable
+
                     var test = lineData.Split(':');
                     if(!int.TryParse(test[0].Trim(), out id))
                     {
@@ -96,7 +117,8 @@ namespace StardewModHelper.Service
                     var data = test[1].Replace("\"", "").Replace("'", "").Trim().Split('/');
 
                     name = data[0].Replace("\"", "").Replace("?", "").Replace("-", "").Replace(".", "").Replace(" ", "").Trim();
-                    if(duplicates.TryGetValue(name, out duplicateCount))
+                   
+                    if (duplicates.TryGetValue(name, out duplicateCount))
                     {
                         duplicateCount++;
                         duplicates[name] = duplicateCount;
@@ -105,6 +127,12 @@ namespace StardewModHelper.Service
                     else
                     {
                         duplicates.Add(name, 1);
+                    }
+
+                    // Translate the name from 
+                    if (Translations.TryGetValue(name, out string translation))
+                    {
+                        name = translation;
                     }
 
                     output += name + " = " + id + "," + Environment.NewLine;
