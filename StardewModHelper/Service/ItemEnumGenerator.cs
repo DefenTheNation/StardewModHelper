@@ -55,17 +55,57 @@ namespace StardewModHelper.Service
         {
             Translations = new Dictionary<string, string>()
             {
-                { "Stone", "MineableStone" },
-                { "Stone2", "MineableDiamondStone" },
+                { "Stone", "DiamondStone" },
+                { "Stone2", "RubyStone" },
+                { "Stone3", "GeodeStone" },
+                { "Stone4", "FrozenGeodeStone" },
+                { "Stone5", "MagmaGeodeStone" },
+                { "Stone6", "IronOreStone" },
+                { "Stone7", "WeirdStone" },
+                { "Stone8", "Stone" },
+                { "Stone9", "StoneMines" },
+                { "Stone10", "StoneOre1" },
+                { "Stone11", "StoneOre2" },
+                { "Stone12", "CopperOreStone" },
+                { "Stone13", "StoneMinesDark1" },
+                { "Stone14", "StoneMinesDark2" },
+                { "Stone15", "GoldOreStone" },
+                { "Stone16", "IridiumOreStone" },
                 { "WarpTotem", "WarpTotemFarm" },
                 { "WarpTotem2", "WarpTotemMountains" },
-                { "WarpTotem3", "WarpTotemBeach" }
+                { "WarpTotem3", "WarpTotemBeach" },
+                { "Egg", "WhiteEgg" },
+                { "LargeEgg", "LargeWhiteEgg" },
+                { "Egg2", "BrownEgg" },
+                { "LargeEgg2", "LargeBrownEgg" },
             };
         }
 
         public void GenerateEnumFromAll()
         {
             string output = "";
+
+            output += @"
+public enum ItemType
+{
+    Object = 0,
+    BigCraftable = 1,
+    Weapon = 2,
+    SpecialItem = 3,
+    RegularObjectRecipe = 4,
+    BigCraftableRecipe = 5,
+}
+
+public enum Quality
+{
+    Regular = 0,
+    Silver = 1,
+    Gold = 2,
+    Iridium = 4
+}
+
+";
+
 
             output += generateIfExists("Boots", "Boots.yaml");
             output += generateIfExists("Hats", "hats.yaml");
