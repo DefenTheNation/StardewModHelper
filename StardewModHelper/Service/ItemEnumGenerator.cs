@@ -18,7 +18,7 @@ namespace StardewModHelper.Service
     public class ItemEnumGenerator
     {
         public const string SteamInstallPath = @"";
-        public const string GOGInstallPath = @"C:\Program Files (x86)\GOG Galaxy\Games\Stardew Valley";
+        public const string GOGInstallPath = @"C:\Users\Josh\Downloads\xnbcli-windows-x64";
 
         public string UnpackedDirectory { get; set; }
         public Dictionary<string, string> Translations { get; set; }
@@ -39,10 +39,10 @@ namespace StardewModHelper.Service
             switch(type)
             {
                 case InstallPathType.Steam:
-                    UnpackedDirectory = Path.Combine(SteamInstallPath, "UnPacked");
+                    UnpackedDirectory = Path.Combine(SteamInstallPath, "unpacked");
                     break;
                 case InstallPathType.GOG:
-                    UnpackedDirectory = Path.Combine(GOGInstallPath, "UnPacked");
+                    UnpackedDirectory = Path.Combine(GOGInstallPath, "unpacked");
                     break;
                 case InstallPathType.Custom: default:
                     break;
@@ -107,24 +107,24 @@ public enum Quality
 ";
 
 
-            output += generateIfExists("Boots", "Boots.yaml");
-            output += generateIfExists("Hats", "hats.yaml");
-            output += generateIfExists("Weapons", "weapons.yaml");
-            output += generateIfExists("BigCraftables", "BigCraftablesInformation.yaml");
-            output += generateIfExists("Objects", "ObjectInformation.yaml");
+            output += generateIfExists("Boots", "Boots.json");
+            output += generateIfExists("Hats", "hats.json");
+            output += generateIfExists("Weapons", "weapons.json");
+            output += generateIfExists("BigCraftables", "BigCraftablesInformation.json");
+            output += generateIfExists("Objects", "ObjectInformation.json");
 
             File.WriteAllText("ItemCodes.cs", output);
         }
 
-        private string generateIfExists(string enumName, string YAMLName)
+        private string generateIfExists(string enumName, string JSONName)
         {
-            string fullPath = Path.Combine(UnpackedDirectory, YAMLName);
+            string fullPath = Path.Combine(UnpackedDirectory, JSONName);
 
-            if (File.Exists(fullPath)) return GenerateEnumFromYAML(enumName, fullPath);
+            if (File.Exists(fullPath)) return GenerateEnumFromJSON(enumName, fullPath);
             else return "";
         }
 
-        public string GenerateEnumFromYAML(string enumName, string YAMLPath)
+        public string GenerateEnumFromJSON(string enumName, string JSONPath)
         {
             bool isContent = false;
             int id = -1, duplicateCount = -1;
@@ -133,11 +133,11 @@ public enum Quality
             Dictionary<string, int> duplicates = new Dictionary<string, int>();
 
             string output = getEnumStart(enumName);
-            string[] fileData = File.ReadAllLines(YAMLPath);           
+            string[] fileData = File.ReadAllLines(JSONPath);           
 
             foreach(var lineData in fileData)
             {
-                if (!isContent && lineData.StartsWith("content:"))
+                if (!isContent && lineData.Contains("\"content\":"))
                 {
                     isContent = true;
                 }
@@ -148,7 +148,7 @@ public enum Quality
                     // 3. Translate to readable name, if applicable
 
                     var test = lineData.Split(':');
-                    if(!int.TryParse(test[0].Trim(), out id))
+                    if(!int.TryParse(test[0].Replace("\"", "").Trim(), out id))
                     {
                         Debug.WriteLine("Unable to parse id " + test[0]);
                         continue;
